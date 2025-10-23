@@ -1,13 +1,13 @@
 header {
     display: flex;
     align-items: center;
-    padding: 20px;
+    padding: 5px;
     background-color: rgba(0, 0, 0, 0.7); /* Black with 70% opacity */
     font-family: 'Comfortaa', sans-serif; /* Apply Comfortaa font */
 }
 
 header img {
-    height: 50px; /* Adjust as necessary */
+    height: 100px; /* Adjust as necessary */
     width: auto;
 }
 
