@@ -3,7 +3,7 @@ header {
     align-items: center;
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.7); /* Black with 70% opacity */
-    /* Alternatively, use a dark color of your choice with transparency */
+    font-family: 'Comfortaa', sans-serif; /* Apply Comfortaa font */
 }
 
 header img {
@@ -14,4 +14,5 @@ header img {
 header h1 {
     margin-left: 20px;
     color: white; /* Ensure the text is visible against the background */
+    font-family: 'Comfortaa', sans-serif; /* Ensure the font is applied here as well */
 }
