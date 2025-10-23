@@ -1,8 +1,15 @@
-body {
-    background-image: url('images/background.webp');
-    background-repeat: repeat; /* This will make the image loop */
-    background-size: cover; /* This ensures the image covers the entire background */
-    background-position: center; /* Optional: centers the image */
-    height: 100vh; /* Ensures the body takes the full viewport height */
-    margin: 0; /* Removes default margin */
+header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+header img {
+    height: 50px; /* Adjust as necessary */
+    width: auto;
+}
+
+header h1 {
+    margin-left: 20px;
+    color: white; /* Ensure the text is visible against the background */
 }
