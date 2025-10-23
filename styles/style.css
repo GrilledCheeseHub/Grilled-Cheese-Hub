@@ -8,7 +8,7 @@ header {
 }
 
 header img {
-    height: 60%; /* Adjust logo height to be responsive within the header */
+    height: 90%; /* Adjust logo height to be responsive within the header */
     width: auto; /* Maintain aspect ratio */
 }
 
