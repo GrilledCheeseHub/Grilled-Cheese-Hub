@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Loader</title>
+  <style>
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+    #status{position:fixed;top:8px;left:8px;z-index:9999;background:rgba(255,255,255,0.92);padding:6px 10px;border-radius:6px}
+    .error{color:#b00}.ok{color:#080}
+  </style>
+</head>
+<body>
+  <div id="status">Waiting for hash...</div>
+
+  <script>
+  (function(){
+    const status = document.getElementById('status');
+
+    function decodeHash(rawHash){
+      try {
+        const decodedPercent = decodeURIComponent(rawHash || '');
+        const chars = Array.from(decodedPercent);
+        for (let i = 1; i < chars.length; i += 2) {
+          chars[i] = String.fromCharCode(chars[i].charCodeAt(0) ^ 2);
+        }
+        return chars.join('');
+      } catch (e) {
+        throw new Error('Invalid percent-encoding or hash.');
+      }
+    }
+
+    function redirectToDecoded(rawHash){
+      if (!rawHash) {
+        status.textContent = 'No hash found in URL.';
+        status.className = '';
+        return;
+      }
+      try {
+        const decoded = decodeHash(rawHash);
+        if (!/^[A-Za-z0-9._\-\/]+$/.test(decoded)) {
+          throw new Error('Decoded value contains unsafe characters.');
+        }
+        const target = './assets/' + decoded + '.html';
+        status.textContent = 'Redirecting to: ' + target;
+        status.className = 'ok';
+        // Perform same-origin navigation
+        location.href = target;
+      } catch (err) {
+        status.textContent = 'Error: ' + err.message;
+        status.className = 'error';
+      }
+    }
+
+    const rawHash = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+    redirectToDecoded(rawHash);
+
+    // Also react to future hash changes (optional)
+    window.addEventListener('hashchange', () => {
+      const h = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+      redirectToDecoded(h);
+    }, false);
+  })();
+  </script>
+</body>
+</html>
