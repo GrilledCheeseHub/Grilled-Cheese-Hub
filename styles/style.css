@@ -1,19 +1,26 @@
 header {
     display: flex;
     align-items: center;
-    height: 8vh; /* Makes the header take up 8% of the viewport height */
-    padding: 0 10px; /* Adjust left and right padding, or set as needed */
-    background-color: rgba(0, 0, 0, 0.7); /* Black with 70% opacity */
-    font-family: 'Comfortaa', sans-serif; /* Apply Comfortaa font */
+    height: 8vh;
+    padding: 0 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    font-family: 'Comfortaa', sans-serif;
 }
 
 header img {
-    height: 90%; /* Adjust logo height to be responsive within the header */
-    width: auto; /* Maintain aspect ratio */
+    height: 90%;
+    width: auto;
 }
 
+/* images with class "game" */
+img.game {
+    border-radius: 8px;
+    margin: 4px;
+}
+
+/* title */
 header h1 {
-    margin-left: 10px; /* Reduced margin */
-    color: white; /* Ensure the text is visible against the background */
-    font-size: 1.5em; /* Adjust font size as needed */
+    margin-left: 10px;
+    color: white;
+    font-size: 1.5em;
 }
