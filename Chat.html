@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>WebSocket Chatroom</title>
+  <style>
+    /* General Styles */
+    body { 
+      font-family: system-ui, Arial, sans-serif; 
+      max-width: 900px; 
+      margin: 20px auto; 
+      padding: 0 12px; 
+      background-color: #f4f4f9;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    /* Header and Username Section */
+    #top { 
+      display: flex; 
+      gap: 12px; 
+      align-items: center; 
+      margin-bottom: 12px; 
+      font-size: 16px; 
+      font-weight: bold;
+    }
+    #top label {
+      margin-right: 8px;
+    }
+    #top input[type="text"] {
+      padding: 8px; 
+      font-size: 14px;
+      width: 200px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #status {
+      color: #555;
+      font-size: 14px;
+    }
+
+    /* Log Section */
+    #log { 
+      height: 420px; 
+      border: 1px solid #ddd; 
+      padding: 12px; 
+      overflow: auto; 
+      white-space: pre-wrap; 
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .sys { 
+      color: #2a7ae2; 
+      font-weight: bold;
+    }
+    .you { 
+      color: #28a745;
+    }
+    
+    /* Controls Section */
+    #controls {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    #controls input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #controls button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #controls button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Additional button styling */
+    button:disabled {
+      background-color: #ddd;
+      cursor: not-allowed;
+    }
+
+  </style>
+</head>
+<body>
+  <h2>WebSocket Chatroom</h2>
+
+  <div id="top">
+    <label>Username <input id="username" type="text" value="Guest" /></label>
+    <span id="status" class="small">Disconnected</span>
+  </div>
+
+  <div id="log" aria-live="polite"></div>
+
+  <div id="controls">
+    <input id="message" type="text" placeholder="Type a message and press Enter" style="flex:1" />
+    <button id="send">Send</button>
+    <button id="connect">Connect</button>
+    <button id="disconnect">Disconnect</button>
+  </div>
+
+  <script>
+  (function(){
+    const WS_URL = 'wss://cl.mikedev101.cc/';
+    const ROOM = 'default';
+    const logEl = document.getElementById('log');
+    const userEl = document.getElementById('username');
+    const msgEl = document.getElementById('message');
+    const sendBtn = document.getElementById('send');
+    const connectBtn = document.getElementById('connect');
+    const disconnectBtn = document.getElementById('disconnect');
+    const statusEl = document.getElementById('status');
+
+    let ws = null;
+    let reconnectDelay = 1000;
+    let manuallyClosed = false;
+    let lastSentVal = null;
+    let lastSentTimestamp = 0;
+
+    // Regex that matches "{Username}: {Message}" where username is non-empty (no colon),
+    // then colon, space, then message (at least one non-space).
+    const chatLineRegex = /^[^:]{1,64}: .+$/;
+
+    function appendLog(text, cls) {
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.textContent = `[${time}] ${text}`;
+      if (cls) line.className = cls;
+      logEl.appendChild(line);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setStatus(s) { statusEl.textContent = s; }
+
+    function buildPayload(username, message) {
+      const val = `${username}: ${message}`;
+      return { payloadStr: JSON.stringify({ cmd: 'gmsg', val, rooms: ROOM }), val };
+    }
+
+    function handleUlist(parsed) {
+      try {
+        const mode = parsed.mode;
+        const user = parsed.val && parsed.val.username ? parsed.val.username : 'unknown';
+        if (mode === 'add') appendLog(`System: ${user} joined`, 'sys');
+        else if (mode === 'remove') appendLog(`System: ${user} left`, 'sys');
+      } catch (e) {
+        // ignore malformed ulist
+      }
+    }
+
+    function connect() {
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+      manuallyClosed = false;
+      appendLog('Connecting to ' + WS_URL + ' ...', 'sys');
+      setStatus('Connecting...');
+      ws = new WebSocket(WS_URL);
+
+      ws.addEventListener('open', () => {
+        appendLog('Connected.', 'sys');
+        setStatus('Connected');
+        reconnectDelay = 1000;
+      });
+
+      ws.addEventListener('message', (ev) => {
+        let data = ev.data;
+        const now = Date.now();
+
+        // Try parse JSON first
+        try {
+          const parsed = JSON.parse(data);
+
+          // handle user list events (join/leave)
+          if (parsed && parsed.cmd === 'ulist') {
+            handleUlist(parsed);
+            return;
+          }
+
+          // If parsed contains a 'val' string, treat that as candidate chat text
+          if (parsed && typeof parsed.val === 'string') {
+            const text = parsed.val.trim();
+            // ignore server echo of our own send
+            if (text === lastSentVal && (now - lastSentTimestamp) < 5000) {
+              lastSentVal = null;
+              lastSentTimestamp = 0;
+              return;
+            }
+            // only display if it matches the strict chat pattern
+            if (chatLineRegex.test(text)) appendLog(text);
+            return;
+          }
+
+          // Other JSON: ignore
+          return;
+        } catch (e) {
+          // Not JSON — treat raw text
+        }
+
+        const trimmed = String(data).trim();
+
+        // If raw text matches strict chat pattern, display it
+        if (chatLineRegex.test(trimmed)) {
+          appendLog(trimmed);
+        }
+        // otherwise ignore (coordinates, noise, etc.)
+      });
+
+      ws.addEventListener('close', (ev) => {
+        appendLog('Disconnected. Code: ' + ev.code + (ev.reason ? ' Reason: ' + ev.reason : ''), 'sys');
+        setStatus('Disconnected');
+        ws = null;
+        if (!manuallyClosed) {
+          setTimeout(() => {
+            appendLog('Reconnecting...', 'sys');
+            connect();
+            reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+          }, reconnectDelay);
+        }
+      });
+
+      ws.addEventListener('error', () => {
+        appendLog('WebSocket error', 'sys');
+      });
+    }
+
+    function disconnect() {
+      if (!ws) return;
+      manuallyClosed = true;
+      ws.close(1000, 'User disconnected');
+      ws = null;
+      setStatus('Disconnected');
+    }
+
+    function sendMessage() {
+      const username = (userEl.value || 'Guest').trim();
+      const message = msgEl.value.trim();
+      if (!message) return;
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        appendLog('Cannot send — not connected.', 'sys');
+        return;
+      }
+      const { payloadStr, val } = buildPayload(username, message);
+      lastSentVal = val;
+      lastSentTimestamp = Date.now();
+      ws.send(payloadStr);
+      // show local send as delivered; comment out if you prefer server-only display
+      appendLog('(you) ' + val, 'you');
+      msgEl.value = '';
+      msgEl.focus();
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    connectBtn.addEventListener('click', connect);
+    disconnectBtn.addEventListener('click', disconnect);
+    msgEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+    // auto connect
+    connect();
+
+    window.addEventListener('beforeunload', () => { if (ws && ws.readyState === WebSocket.OPEN) ws.close(1000, 'Unload'); });
+  })();
+  </script>
+</body>
+</html>
