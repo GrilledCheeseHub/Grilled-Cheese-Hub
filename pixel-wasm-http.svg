@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="background-color:#000000">
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml" id="_c" style="width:100%;height:100%;overflow:hidden"></div>
+  </foreignObject>
+  <script type="text/javascript"><![CDATA[
+    (function(){
+      var u="https://raw.githubusercontent.com/GrilledCheeseHub/Grilled-Cheese-Hub/refs/heads/main/Pixel-WASM_1.12.2.html";
+      var p=document.getElementById("_c");
+      if(!p)return;
+      p.innerHTML="<div style=\"display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;color:#999\">Loading...</div>";
+      fetch(u).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(function(h){
+        var f=document.createElementNS("http://www.w3.org/1999/xhtml","iframe");
+        f.style.cssText="width:100%;height:100%;border:none";
+        f.setAttribute("allowfullscreen","true");
+        f.setAttribute("allow","autoplay *; fullscreen *");
+        p.innerHTML="";
+        p.appendChild(f);
+        f.contentDocument.open();
+        f.contentDocument.write(h);
+        f.contentDocument.close();
+      }).catch(function(e){
+        p.innerHTML="<div style=\"display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;color:#d32f2f;padding:20px;text-align:center\">Failed to fetch:<br><span style=\"font-size:13px;color:#888\">"+e.message+"</span></div>";
+      });
+    })();
+  ]]></script>
+</svg>
