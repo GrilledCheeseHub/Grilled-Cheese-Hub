@@ -13,12 +13,12 @@
           <div class="loader-content">
             <div class="loader-text">Loading EaglercraftX...</div>
             <div id="progressBar">
-              <div id="progressFill"></div>
+              <div id="progressFill">&#160;</div>
             </div>
             <div class="progress-text"><span id="percentText">0</span>%</div>
           </div>
         </div>
-        <iframe id="gameContainer" sandbox="allow-same-origin allow-scripts allow-pointer-lock allow-topnavigation allow-forms allow-popups allow-presentation" allowfullscreen="true" allow="autoplay; fullscreen; accelerometer; camera; gyroscope; magnetometer"></iframe>
+        <div id="gameContainer"></div>
         
         <script>
           (async function() {
@@ -26,6 +26,7 @@
               const progressFill = document.getElementById('progressFill');
               const percentText = document.getElementById('percentText');
               const loadingContainer = document.getElementById('loadingContainer');
+              const gameContainer = document.getElementById('gameContainer');
               
               let progress = 0;
               const progressInterval = setInterval(() => {
@@ -52,12 +53,26 @@
               const htmlContent = await response.text();
               updateProgress(70);
               
-              const iframe = document.getElementById('gameContainer');
-              const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+              const blob = new Blob([htmlContent], { type: 'text/html' });
+              const url = URL.createObjectURL(blob);
               
-              iframeDoc.open();
-              iframeDoc.write(htmlContent);
-              iframeDoc.close();
+              const iframe = document.createElement('iframe');
+              iframe.id = 'gameContainer';
+              iframe.sandbox.add('allow-same-origin');
+              iframe.sandbox.add('allow-scripts');
+              iframe.sandbox.add('allow-pointer-lock');
+              iframe.sandbox.add('allow-topnavigation');
+              iframe.sandbox.add('allow-forms');
+              iframe.sandbox.add('allow-popups');
+              iframe.sandbox.add('allow-presentation');
+              iframe.setAttribute('allowfullscreen', 'true');
+              iframe.setAttribute('allow', 'autoplay; fullscreen; accelerometer; camera; gyroscope; magnetometer');
+              iframe.style.width = '100%';
+              iframe.style.height = '100%';
+              iframe.style.border = 'none';
+              iframe.src = url;
+              
+              gameContainer.replaceWith(iframe);
               updateProgress(90);
               
               await new Promise((resolve) => {
@@ -80,12 +95,7 @@
               
             } catch (error) {
               console.error('Error loading game:', error);
-              const iframe = document.getElementById('gameContainer');
-              const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-              iframeDoc.open();
-              iframeDoc.write('<html><body style="background:#000;color:#f00;font-family:monospace;padding:20px;"><h2>Error loading game</h2><p>' + error.message + '</p></body></html>');
-              iframeDoc.close();
-              document.getElementById('loadingContainer').innerHTML = '<div class="loader-content"><div class="loader-text" style="color:#f00;">Error loading game</div><p style="color:#f00;margin-top:20px;">Check console for details</p></div>';
+              document.getElementById('loadingContainer').innerHTML = '<div class="loader-content"><div class="loader-text" style="color:#f00;">Error loading game</div><p style="color:#f00;margin-top:20px;">' + error.message + '</p></div>';
             }
           })();
         </script>
