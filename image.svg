@@ -2,8 +2,40 @@
   <foreignObject width="100%" height="100%">
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
-        <script>(function(){const XHTML_NS="http://www.w3.org/1999/xhtml";const root=document.querySelector("foreignObject").firstElementChild;const head=root.querySelector("head");const body=root.querySelector("body");const originalCreateElement=document.createElement.bind(document);const originalCreateElementNS=document.createElementNS.bind(document);Object.defineProperty(document,"head",{get(){return head},configurable:true});Object.defineProperty(document,"body",{get(){return body},configurable:true});Object.defineProperty(document,"documentElement",{get(){return root},configurable:true});document.createElement=function(tagName,options){if(typeof tagName==="string"){return originalCreateElementNS(XHTML_NS,tagName,options)}return originalCreateElement(tagName,options)};document.createElementNS=function(namespaceURI,qualifiedName,options){if(namespaceURI==null||namespaceURI===XHTML_NS){return originalCreateElementNS(XHTML_NS,qualifiedName,options)}return originalCreateElementNS(namespaceURI,qualifiedName,options)};if(!location.hash){history.replaceState(history.state,"","#/");}})();</script>
-        <style><![CDATA[html,body{margin:0;width:100%;height:100%;overflow:hidden}body{background:#000}foreignObject{overflow:visible}#loadingContainer{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;transition:opacity 0.5s ease-out}.loader-content{text-align:center}.loader-text{color:#0066cc;font-family:Arial,sans-serif;font-size:24px;margin-bottom:40px;font-weight:bold}#progressBar{width:400px;height:40px;background:#1a1a1a;border:2px solid #0066cc;border-radius:4px;overflow:hidden;box-shadow:0 0 10px rgba(0,102,204,0.3)}#progressFill{height:100%;background:linear-gradient(90deg,#0066cc,#00ccff);width:0%;transition:width 0.2s ease-out}#loadingContainer.hidden{opacity:0;pointer-events:none}.progress-text{color:#0066cc;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;margin-top:15px}#gameContainer{width:100%;height:100%;border:none;display:block}]]></style>
+        <script type="text/javascript"><![CDATA[
+(function(){
+  const XHTML_NS="http://www.w3.org/1999/xhtml";
+  const root=document.querySelector("foreignObject").firstElementChild;
+  const head=root.querySelector("head");
+  const body=root.querySelector("body");
+  const originalCreateElement=document.createElement.bind(document);
+  const originalCreateElementNS=document.createElementNS.bind(document);
+  Object.defineProperty(document,"head",{get(){return head},configurable:true});
+  Object.defineProperty(document,"body",{get(){return body},configurable:true});
+  Object.defineProperty(document,"documentElement",{get(){return root},configurable:true});
+  document.createElement=function(tagName,options){
+    if(typeof tagName==="string"){return originalCreateElementNS(XHTML_NS,tagName,options)}
+    return originalCreateElement(tagName,options)
+  };
+  document.createElementNS=function(namespaceURI,qualifiedName,options){
+    if(namespaceURI==null||namespaceURI===XHTML_NS){return originalCreateElementNS(XHTML_NS,qualifiedName,options)}
+    return originalCreateElementNS(namespaceURI,qualifiedName,options)
+  };
+})();
+        ]]></script>
+        <style type="text/css"><![CDATA[
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:#000}
+foreignObject{overflow:visible}
+#loadingContainer{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;transition:opacity 0.5s ease-out}
+.loader-content{text-align:center}
+.loader-text{color:#0066cc;font-family:Arial,sans-serif;font-size:24px;margin-bottom:40px;font-weight:bold}
+#progressBar{width:400px;height:40px;background:#1a1a1a;border:2px solid #0066cc;border-radius:4px;overflow:hidden;box-shadow:0 0 10px rgba(0,102,204,0.3)}
+#progressFill{height:100%;background:linear-gradient(90deg,#0066cc,#00ccff);width:0%;transition:width 0.2s ease-out}
+#loadingContainer.hidden{opacity:0;pointer-events:none}
+.progress-text{color:#0066cc;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;margin-top:15px}
+#gameContainer{width:100%;height:100%;border:none;display:block}
+        ]]></style>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>EaglercraftX 1.12.2</title>
@@ -20,85 +52,85 @@
         </div>
         <div id="gameContainer"></div>
         
-        <script>
-          (async function() {
-            try {
-              const progressFill = document.getElementById('progressFill');
-              const percentText = document.getElementById('percentText');
-              const loadingContainer = document.getElementById('loadingContainer');
-              const gameContainer = document.getElementById('gameContainer');
-              
-              let progress = 0;
-              const progressInterval = setInterval(() => {
-                if (progress < 30) {
-                  progress += Math.random() * 15;
-                  updateProgress(Math.min(progress, 29));
-                }
-              }, 100);
-              
-              function updateProgress(percent) {
-                const clampedPercent = Math.min(Math.max(percent, 0), 100);
-                progressFill.style.width = clampedPercent + '%';
-                percentText.textContent = Math.floor(clampedPercent);
-              }
-              
-              updateProgress(30);
-              const response = await fetch('https://raw.githubusercontent.com/GrilledCheeseHub/Grilled-Cheese-Hub/2fb7c05ef52c0e5e454eb7c1e804560f6a15c88c/Pixel-WASM_1.12.2.html');
-              updateProgress(50);
-              
-              if (!response.ok) {
-                throw new Error('HTTP ' + response.status);
-              }
-              
-              const htmlContent = await response.text();
-              updateProgress(70);
-              
-              const blob = new Blob([htmlContent], { type: 'text/html' });
-              const url = URL.createObjectURL(blob);
-              
-              const iframe = document.createElement('iframe');
-              iframe.id = 'gameContainer';
-              iframe.sandbox.add('allow-same-origin');
-              iframe.sandbox.add('allow-scripts');
-              iframe.sandbox.add('allow-pointer-lock');
-              iframe.sandbox.add('allow-topnavigation');
-              iframe.sandbox.add('allow-forms');
-              iframe.sandbox.add('allow-popups');
-              iframe.sandbox.add('allow-presentation');
-              iframe.setAttribute('allowfullscreen', 'true');
-              iframe.setAttribute('allow', 'autoplay; fullscreen; accelerometer; camera; gyroscope; magnetometer');
-              iframe.style.width = '100%';
-              iframe.style.height = '100%';
-              iframe.style.border = 'none';
-              iframe.src = url;
-              
-              gameContainer.replaceWith(iframe);
-              updateProgress(90);
-              
-              await new Promise((resolve) => {
-                setTimeout(() => {
-                  updateProgress(100);
-                  clearInterval(progressInterval);
-                  resolve();
-                }, 1500);
-              });
-              
-              setTimeout(() => {
-                loadingContainer.classList.add('hidden');
-              }, 300);
-              
-              document.addEventListener('click', function requestFullscreen() {
-                if (iframe.requestFullscreen) {
-                  iframe.requestFullscreen().catch(err => console.log('Fullscreen request failed:', err));
-                }
-              }, { once: true });
-              
-            } catch (error) {
-              console.error('Error loading game:', error);
-              document.getElementById('loadingContainer').innerHTML = '<div class="loader-content"><div class="loader-text" style="color:#f00;">Error loading game</div><p style="color:#f00;margin-top:20px;">' + error.message + '</p></div>';
-            }
-          })();
-        </script>
+        <script type="text/javascript"><![CDATA[
+(async function() {
+  try {
+    const progressFill = document.getElementById('progressFill');
+    const percentText = document.getElementById('percentText');
+    const loadingContainer = document.getElementById('loadingContainer');
+    const gameContainer = document.getElementById('gameContainer');
+    
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+      if (progress < 30) {
+        progress += Math.random() * 15;
+        updateProgress(Math.min(progress, 29));
+      }
+    }, 100);
+    
+    function updateProgress(percent) {
+      const clampedPercent = Math.min(Math.max(percent, 0), 100);
+      progressFill.style.width = clampedPercent + '%';
+      percentText.textContent = Math.floor(clampedPercent);
+    }
+    
+    updateProgress(30);
+    const response = await fetch('https://raw.githubusercontent.com/GrilledCheeseHub/Grilled-Cheese-Hub/2fb7c05ef52c0e5e454eb7c1e804560f6a15c88c/Pixel-WASM_1.12.2.html');
+    updateProgress(50);
+    
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+    
+    const htmlContent = await response.text();
+    updateProgress(70);
+    
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    const iframe = document.createElement('iframe');
+    iframe.id = 'gameFrame';
+    iframe.sandbox.add('allow-same-origin');
+    iframe.sandbox.add('allow-scripts');
+    iframe.sandbox.add('allow-pointer-lock');
+    iframe.sandbox.add('allow-topnavigation');
+    iframe.sandbox.add('allow-forms');
+    iframe.sandbox.add('allow-popups');
+    iframe.sandbox.add('allow-presentation');
+    iframe.setAttribute('allowfullscreen', 'true');
+    iframe.setAttribute('allow', 'autoplay; fullscreen; accelerometer; camera; gyroscope; magnetometer');
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+    iframe.src = url;
+    
+    gameContainer.replaceWith(iframe);
+    updateProgress(90);
+    
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        updateProgress(100);
+        clearInterval(progressInterval);
+        resolve();
+      }, 1500);
+    });
+    
+    setTimeout(() => {
+      loadingContainer.classList.add('hidden');
+    }, 300);
+    
+    document.addEventListener('click', function requestFullscreen() {
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen().catch(err => console.log('Fullscreen request failed:', err));
+      }
+    }, { once: true });
+    
+  } catch (error) {
+    console.error('Error loading game:', error);
+    document.getElementById('loadingContainer').innerHTML = '<div class="loader-content"><div class="loader-text" style="color:#f00;">Error loading game</div><p style="color:#f00;margin-top:20px;">' + error.message + '</p></div>';
+  }
+})();
+        ]]></script>
       </body>
     </html>
   </foreignObject>
