@@ -4,7 +4,7 @@
   </foreignObject>
   <script type="text/javascript"><![CDATA[
     (function(){
-      var u="https://gitlab.com/pucksrevenge27-group/tuffclientmirror/-/raw/main/Tuff_Client_Offline_WASM.html";
+      var u="/Tuff.html";
       var p=document.getElementById("_c");
       if(!p)return;
       p.innerHTML="<div style=\"display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;color:#999\">Loading TuffClient...</div>";
