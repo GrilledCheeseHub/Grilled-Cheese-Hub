@@ -4,7 +4,7 @@
   </foreignObject>
   <script type="text/javascript"><![CDATA[
     (function(){
-      var u="https://github.com/TuffNetwork/Tuff-Client-Builds/releases/download/1.1UT15/Tuff_Client_Offline_WASM.html";
+      var u="hhttps://cdn.jsdelivr.net/gh/TuffNetwork/Tuff-Client-Builds@releases/download/1.1UT15/Tuff_Client_Offline_WASM.html";
       var p=document.getElementById("_c");
       if(!p)return;
       p.innerHTML="<div style=\"display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;color:#999\">Loading...</div>";
