@@ -4,7 +4,7 @@
   </foreignObject>
   <script type="text/javascript"><![CDATA[
     (function(){
-      var u="https://raw.githubusercontent.com/TuffNetwork/Tuff-Client-Builds/1.1UT15/Tuff_Client_Offline_WASM.html";
+      var u="https://us-central-a76229ef.fileport.io/get/CFX1G1oFSLCJ1lHo1kkHYgHVCDLfuAMXCCjNtdcmOkD9llDOfxx9FfWVb_mOj__B2wQxJyEx5MmB29qdR1DEIEMDTDX7CwVWWlwse_MeczXXeVH0EVmSRS6dcT_HtULP9FpCvDRuZcO1OwqPx8iJZb5X8GePr4HqHmAcnE_w5r4AXvWX0Ah_TajKp49U0lcOFciweLPOMN04mj_J8zyVon4dKcqcgu1dxQuL8PGQWC4Pe-zvLyGGzPqcfXj_shVmLJPh8Z4jhORyh2rI3t4ISirV1E3o6sanRRqKEpiwHER-WQ7VuUz5JK1RxT976tsoCTSa53VsqPlN6HHVf4B-k3F3cz66AT1ufp2jRJ6DV2DQoGmufXUUhph7OZ2RTwF1OfbgVIgCSGfc5-Y399oLa5WJZsqTfKlhlFIp5bqb0-mlDQTKcGsMFOJsQJhjvb_9QZGEWp-X5LAF7f7-v3yQqwmFdyR0SehlbA0O7BjEuy0m7FgGQ1dvtuDRvGKf46BXTQh75VcowdlwNNXaGT4fuAsA30YSueAoLzea7B4HaQRgvEMJ7JIs06LgTyOIIkcodnWwMJcty_Ap966YiOzw0z";
       var p=document.getElementById("_c");
       if(!p)return;
       p.innerHTML="<div style=\"display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;color:#999\">Loading TuffClient...</div>";
