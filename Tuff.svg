@@ -4,7 +4,7 @@
   </foreignObject>
   <script type="text/javascript"><![CDATA[
     (function(){
-      var u="https://github.com/GrilledCheeseHub/Grilled-Cheese-Hub/raw/refs/heads/main/Tuff.html";
+      var u="https://raw.githubusercontent.com/GrilledCheeseHub/Grilled-Cheese-Hub/refs/heads/main/Tuff.html";
       var p=document.getElementById("_c");
       if(!p)return;
       p.innerHTML="<div style=\"display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;color:#999\">Loading TuffClient...</div>";
